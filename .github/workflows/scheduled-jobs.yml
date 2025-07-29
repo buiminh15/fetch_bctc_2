@@ -79,7 +79,14 @@ jobs:
           - bctc-tng.js
           - bctc-vms.js
           - bctc-wsb.js
-
+          - bctc-cmd.js
+          - bctc-dha.js
+          - bctc-fpt.js
+          - bctc-hcm.js
+          - bctc-nct.js
+          - bctc-pap.js
+          - bctc-pia.js
+          - bctc-vav.js
     steps:
       - name: "❗️ Skip 23:00 if in special periods"
         run: |

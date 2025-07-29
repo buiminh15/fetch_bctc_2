@@ -19,7 +19,7 @@ axiosRetry.default(axios, {
 
 async function fetchAndExtractData() {
   try {
-    const response = await axios.get(`${CAFEF_API}${COMPANIES.HCM}`, {
+    const response = await axios.get(`${CAFEF_API}${COMPANIES.FPT}`, {
       headers: {
         'accept': 'text/html',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
@@ -50,15 +50,15 @@ async function fetchAndExtractData() {
     }
     console.log('📢 [bctc-mbs.js:50]', names);
     // Lọc ra các báo cáo chưa có trong DB
-    const newNames = await filterNewNames(names, COMPANIES.HCM);
+    const newNames = await filterNewNames(names, COMPANIES.FPT);
     console.log('📢 [bctc-cdn.js:46]', newNames);
     if (newNames.length) {
-      await insertBCTC(newNames, COMPANIES.HCM);
+      await insertBCTC(newNames, COMPANIES.FPT);
 
       // Gửi thông báo Telegram cho từng báo cáo mới
       await Promise.all(
         newNames.map(name => {
-          return sendTelegramNotification(`Báo cáo tài chính của HCM ::: ${name}`);
+          return sendTelegramNotification(`Báo cáo tài chính của FPT ::: ${name}`);
         })
       );
       console.log(`Đã thêm ${newNames.length} báo cáo mới và gửi thông báo.`);
