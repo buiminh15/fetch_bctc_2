@@ -1,0 +1,148 @@
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+  schedule:
+    # LƯU Ý: Toàn bộ thời gian được tính theo múi giờ UTC.
+    # UTC nhanh hơn giờ Việt Nam (UTC+7) 7 tiếng.
+    # Ví dụ: 00:00 UTC là 07:00 sáng tại Việt Nam.
+
+    # Chạy mỗi 30 phút, từ ngày 10 đến 30 tháng 4
+    - cron: "0,30 * 10-30 4 *"
+
+    # Chạy mỗi 30 phút, trong suốt tháng 5
+    - cron: "0,30 * * 5 *"
+
+    # Chạy mỗi 30 phút, từ ngày 10 đến 31 tháng 7
+    - cron: "0,30 * 10-31 7 *"
+
+    # Chạy mỗi 30 phút, từ ngày 10 đến 31 tháng 10
+    - cron: "0,30 * 10-31 10 *"
+
+    # Chạy mỗi 30 phút, trong suốt tháng 1
+    - cron: "0,30 * * 1 *"
+
+    # Chạy mỗi 30 phút, trong suốt tháng 2
+    - cron: "0,30 * * 2 *"
+
+    # Chạy mỗi 30 phút, trong suốt tháng 3
+    - cron: "0,30 * * 3 *"
+
+    # Chạy 23:00 UTC mỗi ngày (dành cho ngoài các khung đặc biệt)
+    - cron: "0 23 * * *"
+
+jobs:
+  run-each-script:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 3
+      fail-fast: false
+      matrix:
+        script:
+          - bctc-gic.js
+          - bctc-las.js
+          - bctc-dad.js
+          - bctc-lix.js
+          - bctc-pgd.js
+          - bctc-saf.js
+          - bctc-sba.js
+          - bctc-smn.js
+          - bctc-szg.js
+          - bctc-vtb.js
+          - bctc-wcs.js
+          - bctc-btw.js
+          - bctc-ccr.js
+          - bctc-ttc.js
+          - bctc-hat.js
+          - bctc-ifs.js
+          - bctc-nap.js
+          - bctc-pmb.js
+          - bctc-pmc.js
+          - bctc-qnp.js
+          - bctc-sdn.js
+          - bctc-bmc.js
+          - bctc-cng.js
+          - bctc-gcf.js
+          - bctc-gta.js
+          - bctc-hni.js
+          - bctc-mcm.js
+          - bctc-plx.js
+          - bctc-s4a.js
+          - bctc-sbm.js
+          - bctc-szb.js
+          - bctc-bsh.js
+          - bctc-clc.js
+          - bctc-csv.js
+          - bctc-dhp.js
+          - bctc-dse.js
+          - bctc-hgm.js
+          - bctc-hti.js
+          - bctc-sze.js
+          - bctc-ttd.js
+          - bctc-ttn.js
+          - bctc-sav.js
+          - bctc-sfc.js
+          - bctc-sfg.js
+          - bctc-sfn.js
+          - bctc-sgh.js
+          - bctc-skg.js
+          - bctc-ssc.js
+          - bctc-ssi.js
+          - bctc-svi.js
+
+    steps:
+      - name: "❗️ Skip 23:00 if in special periods"
+        run: |
+          hour=$(date -u +"%H")
+          day=$(date -u +"%d")
+          month=$(date -u +"%m")
+
+          if [ "$hour" = "23" ]; then
+            # Tháng 4 (10-30)
+            if [ "$month" = "04" ] && [ "$day" -ge 10 ] && [ "$day" -le 30 ]; then
+              echo "In special period (April 10-30), skip 23:00 run."
+              exit 0
+            fi
+            # Tháng 5
+            if [ "$month" = "05" ]; then
+              echo "In special period (May), skip 23:00 run."
+              exit 0
+            fi
+            # Tháng 7 (10-31)
+            if [ "$month" = "07" ] && [ "$day" -ge 10 ] && [ "$day" -le 31 ]; then
+              echo "In special period (July 10-31), skip 23:00 run."
+              exit 0
+            fi
+            # Tháng 10 (10-31)
+            if [ "$month" = "10" ] && [ "$day" -ge 10 ] && [ "$day" -le 31 ]; then
+              echo "In special period (October 10-31), skip 23:00 run."
+              exit 0
+            fi
+            # Tháng 1, 2, 3
+            if [ "$month" = "01" ] || [ "$month" = "02" ] || [ "$month" = "03" ]; then
+              echo "In special period (Jan, Feb, Mar), skip 23:00 run."
+              exit 0
+            fi
+          fi
+          echo "Run workflow as normal."
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ${{ matrix.script }}
+        run: node ${{ matrix.script }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
