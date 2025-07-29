@@ -41,56 +41,9 @@ jobs:
       fail-fast: false
       matrix:
         script:
-          - bctc-gic.js
-          - bctc-las.js
-          - bctc-dad.js
-          - bctc-lix.js
-          - bctc-pgd.js
-          - bctc-saf.js
-          - bctc-sba.js
-          - bctc-smn.js
-          - bctc-szg.js
-          - bctc-vtb.js
-          - bctc-wcs.js
-          - bctc-btw.js
-          - bctc-ccr.js
-          - bctc-ttc.js
-          - bctc-hat.js
-          - bctc-ifs.js
-          - bctc-nap.js
-          - bctc-pmb.js
-          - bctc-pmc.js
-          - bctc-qnp.js
-          - bctc-sdn.js
-          - bctc-bmc.js
-          - bctc-cng.js
-          - bctc-gcf.js
-          - bctc-gta.js
-          - bctc-hni.js
-          - bctc-mcm.js
-          - bctc-plx.js
-          - bctc-s4a.js
-          - bctc-sbm.js
-          - bctc-szb.js
-          - bctc-bsh.js
-          - bctc-clc.js
-          - bctc-csv.js
-          - bctc-dhp.js
-          - bctc-dse.js
-          - bctc-hgm.js
-          - bctc-hti.js
-          - bctc-sze.js
-          - bctc-ttd.js
-          - bctc-ttn.js
-          - bctc-sav.js
-          - bctc-sfc.js
-          - bctc-sfg.js
-          - bctc-sfn.js
-          - bctc-sgh.js
-          - bctc-skg.js
-          - bctc-ssc.js
-          - bctc-ssi.js
-          - bctc-svi.js
+          - bctc-pac.js
+          - bctc-phr.js
+          - bctc-pnp.js
 
     steps:
       - name: "❗️ Skip 23:00 if in special periods"

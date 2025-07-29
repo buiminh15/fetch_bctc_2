@@ -6,6 +6,11 @@ const { insertBCTC, filterNewNames } = require('./bctc');
 const he = require('he');
 console.log('📢 [bctc-cdn.js:7]', 'running');
 
+const https = require('https');
+const agent = new https.Agent({
+  rejectUnauthorized: false
+});
+
 const axiosRetry = require('axios-retry');
 
 axiosRetry.default(axios, {
@@ -19,12 +24,13 @@ axiosRetry.default(axios, {
 
 async function fetchAndExtractData() {
   try {
-    const response = await axios.get('https://abic.com.vn/vi/bao-cao-tai-chinh', {
+    const response = await axios.get('https://www.pinaco.com/co-dong/bao-cao-tai-chinh-66.html', {
       headers: {
         'accept': 'text/html',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
       },
-      timeout: 60000
+      timeout: 60000,
+      httpsAgent: agent
     });
 
     const html = response.data;
@@ -32,7 +38,7 @@ async function fetchAndExtractData() {
     const currentYear = new Date().getFullYear().toString();
     // Lấy tối đa 5 báo cáo mới nhất
     const names = [];
-    $('tbody td.abic_name').each((_, el) => {
+    $('a').each((_, el) => {
       const nameRaw = $(el).text().trim();
       const name = he.decode(nameRaw);
       const filterCondition = [currentYear, 'báo cáo tài chính'];
@@ -47,15 +53,15 @@ async function fetchAndExtractData() {
     }
     console.log('📢 [bctc-mbs.js:50]', names);
     // Lọc ra các báo cáo chưa có trong DB
-    const newNames = await filterNewNames(names, COMPANIES.ABI);
+    const newNames = await filterNewNames(names, COMPANIES.PAC);
     console.log('📢 [bctc-cdn.js:46]', newNames);
     if (newNames.length) {
-      await insertBCTC(newNames, COMPANIES.ABI);
+      await insertBCTC(newNames, COMPANIES.PAC);
 
       // Gửi thông báo Telegram cho từng báo cáo mới
       await Promise.all(
         newNames.map(name => {
-          return sendTelegramNotification(`Báo cáo tài chính của ABI ::: ${name}`);
+          return sendTelegramNotification(`Báo cáo tài chính của PAC ::: ${name}`);
         })
       );
       console.log(`Đã thêm ${newNames.length} báo cáo mới và gửi thông báo.`);
