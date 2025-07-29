@@ -38,7 +38,13 @@ const COMPANIES = {
   TNG: 'TNG',
   QHD: 'QHD',
   LGC: 'LGC',
-  GMX: 'GMX'
+  GMX: 'GMX',
+  DHA: 'DHA',
+  PAP: 'PAP',
+  CMD: 'CMD',
+  VAV: 'VAV',
+  NCT: 'NCT',
+
 };
 
 const CAFEF_API = `https://cafef.vn/du-lieu/Ajax/CongTy/BaoCaoTaiChinh.aspx?sym=`;

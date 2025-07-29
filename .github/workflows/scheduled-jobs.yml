@@ -59,6 +59,26 @@ jobs:
           - bctc-tdw.js
           - bctc-thg.js
           - bctc-vdp.js
+          - bctc-adc.js
+          - bctc-cll.js
+          - bctc-ctb.js
+          - bctc-dhg.js
+          - bctc-dp1.js
+          - bctc-dtp.js
+          - bctc-gmx.js
+          - bctc-hcc.js
+          - bctc-hub.js
+          - bctc-lgc.js
+          - bctc-mig.js
+          - bctc-mvc.js
+          - bctc-no1.js
+          - bctc-pmp.js
+          - bctc-pre.js
+          - bctc-qhd.js
+          - bctc-tng.js
+          - bctc-tng.js
+          - bctc-vms.js
+          - bctc-wsb.js
 
     steps:
       - name: "❗️ Skip 23:00 if in special periods"
