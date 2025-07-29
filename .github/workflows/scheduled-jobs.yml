@@ -44,6 +44,21 @@ jobs:
           - bctc-pac.js
           - bctc-phr.js
           - bctc-pnp.js
+          - bctc-chp.js
+          - bctc-cpc.js
+          - bctc-ctg.js
+          - bctc-dm7.js
+          - bctc-dnc.js
+          - bctc-dpr.js
+          - bctc-dwc.js
+          - bctc-dxp.js
+          - bctc-hcm.js
+          - bctc-imp.js
+          - bctc-nt2.js
+          - bctc-ppp.js
+          - bctc-tdw.js
+          - bctc-thg.js
+          - bctc-vdp.js
 
     steps:
       - name: "❗️ Skip 23:00 if in special periods"
