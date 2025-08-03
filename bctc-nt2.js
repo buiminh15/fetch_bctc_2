@@ -129,4 +129,4 @@ async function fetchMonthlyReport() {
 
 fetchMonthlyReport();
 
-// fetchAndExtractData();
+fetchAndExtractData();
