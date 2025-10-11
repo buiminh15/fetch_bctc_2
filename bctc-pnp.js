@@ -18,7 +18,7 @@ axiosRetry.default(axios, {
 async function fetchAndExtractData() {
   try {
     const response = await axios.get(
-      'https://ezir.fpts.com.vn/ThongTinDoanhNghiep/GetTinDoanhNghiepCongBo?stock_code=PNP&lang=vi-VN',
+      'https://gateway.fpts.com.vn/news/api/gateway/v1/mobile/list?folder=86&code=PNP&pageSize=8&selectedPage=1&cbtt=1&from=01-01-1970&to=01-01-3000&newsType=1',
       {
         headers: {
           'Accept': 'application/json',
@@ -38,10 +38,8 @@ async function fetchAndExtractData() {
         timeout: 60000
       }
     );
-    const currentYear = new Date().getFullYear().toString();
-    // response.data là object JSON, thường có dạng { data: [ ... ], ... }
-    const items = response.data || [];
-    const names = items.filter(item => item.title && item.title.toLowerCase().trim().includes(currentYear)).map(item => item.title && item.title.trim());
+    const items = response.data.Data.Table1 || [];
+    const names = items.filter(item => item.Title).map(item => item.Title && item.Title.trim());
     if (names.length === 0) {
       console.log('Không tìm thấy báo cáo tài chính nào.');
       return;
