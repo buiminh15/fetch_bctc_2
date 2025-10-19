@@ -14,6 +14,7 @@ axiosRetry.default(axios, {
     return axiosRetry.isNetworkOrIdempotentRequestError(error) || error.code === 'ECONNABORTED';
   }
 });
+axios.defaults.headers.common['Referer'] = 'https://eztrade.fpts.com.vn/';
 
 async function fetchAndExtractData() {
   try {
@@ -38,6 +39,8 @@ async function fetchAndExtractData() {
         timeout: 60000
       }
     );
+
+    console.log('📢 [bctc-pnp.js:43]', response);
     const items = response.data.Data.Table1 || [];
     const names = items.filter(item => item.Title).map(item => item.Title && item.Title.trim());
     if (names.length === 0) {
@@ -49,15 +52,15 @@ async function fetchAndExtractData() {
     const newNames = await filterNewNames(names, COMPANIES.PNP);
     console.log('📢 [bctc-geg.js:44]', newNames);
     if (newNames.length) {
-      await insertBCTC(newNames, COMPANIES.PNP);
+      //   await insertBCTC(newNames, COMPANIES.PNP);
 
-      // Gửi thông báo Telegram cho từng báo cáo mới;
-      await Promise.all(
-        newNames.map(name =>
-          sendTelegramNotification(`Báo cáo tài chính của PNP::: ${name}`)
-        )
-      );
-      console.log(`Đã thêm ${newNames.length} báo cáo mới và gửi thông báo.`);
+      //   // Gửi thông báo Telegram cho từng báo cáo mới;
+      //   await Promise.all(
+      //     newNames.map(name =>
+      //       sendTelegramNotification(`Báo cáo tài chính của PNP::: ${name}`)
+      //     )
+      //   );
+      //   console.log(`Đã thêm ${newNames.length} báo cáo mới và gửi thông báo.`);
     } else {
       console.log('Không có báo cáo mới.');
     }
