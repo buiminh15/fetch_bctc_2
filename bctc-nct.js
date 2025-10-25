@@ -19,30 +19,44 @@ axiosRetry.default(axios, {
 
 async function fetchAndExtractData() {
   try {
-    const response = await axios.get(`${CAFEF_API}${COMPANIES.NCT}`, {
+    const currentYear = new Date().getFullYear().toString();
+    const response = await axios.get(`https://ncts.vn/api/app/public-cms/documents?DocumentTypeId=1922d39c-9981-3613-ca7e-3a12ca6521dc&Year=${currentYear}`, {
       headers: {
         'accept': 'text/html',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
       },
       timeout: 60000
     });
+    // const response = await axios.get(`${CAFEF_API}${COMPANIES.NCT}`, {
+    //   headers: {
+    //     'accept': 'text/html',
+    //     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+    //   },
+    //   timeout: 60000
+    // });
 
-    const html = response.data;
-    const $ = cheerio.load(html);
-    const currentYear = new Date().getFullYear().toString();
-    // Lấy tối đa 5 báo cáo mới nhất
+    const res = response.data;
+
     const names = [];
-    $('.treeview table td').each((index, element) => {
-      const nameRaw = $(element).text().trim();
-      const name = he.decode(nameRaw);
-      if (index < 10) {
-        const filterCondition = [currentYear, 'báo cáo tài chính'];
-        if (filterCondition.every(y => name.trim().toLocaleLowerCase().includes(y))) {
-          names.push(`${name}`);
-        }
-      }
-
+    res.forEach(element => {
+      names.push(element.name);
     });
+
+    // const $ = cheerio.load(html);
+
+    // // Lấy tối đa 5 báo cáo mới nhất
+    // const names = [];
+    // $('.treeview table td').each((index, element) => {
+    //   const nameRaw = $(element).text().trim();
+    //   const name = he.decode(nameRaw);
+    //   if (index < 10) {
+    //     const filterCondition = [currentYear, 'báo cáo tài chính'];
+    //     if (filterCondition.every(y => name.trim().toLocaleLowerCase().includes(y))) {
+    //       names.push(`${name}`);
+    //     }
+    //   }
+
+    // });
 
     if (names.length === 0) {
       console.log('Không tìm thấy báo cáo tài chính nào.');
