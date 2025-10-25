@@ -19,7 +19,7 @@ axiosRetry.default(axios, {
 
 async function fetchAndExtractData() {
   try {
-    const response = await axios.get(`${CAFEF_API}${COMPANIES.VAV}`, {
+    const response = await axios.get(`https://gateway.fpts.com.vn/news/api/gateway/v1/mobile/list?folder=86&code=CHP&pageSize=8&selectedPage=1&cbtt=1&from=01-01-1970&to=01-01-3000&newsType=1`, {
       headers: {
         'accept': 'text/html',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
@@ -27,22 +27,8 @@ async function fetchAndExtractData() {
       timeout: 60000
     });
 
-    const html = response.data;
-    const $ = cheerio.load(html);
-    const currentYear = new Date().getFullYear().toString();
-    // Lấy tối đa 5 báo cáo mới nhất
-    const names = [];
-    $('.treeview table td').each((index, element) => {
-      const nameRaw = $(element).text().trim();
-      const name = he.decode(nameRaw);
-      if (index < 10) {
-        const filterCondition = [currentYear, 'báo cáo tài chính'];
-        if (filterCondition.every(y => name.trim().toLocaleLowerCase().includes(y))) {
-          names.push(`${name}`);
-        }
-      }
-
-    });
+    const items = response.data.Data.Table1 || [];
+    const names = items.filter(item => item.Title).map(item => item.Title && item.Title.trim());
 
     if (names.length === 0) {
       console.log('Không tìm thấy báo cáo tài chính nào.');
@@ -58,7 +44,11 @@ async function fetchAndExtractData() {
       // Gửi thông báo Telegram cho từng báo cáo mới
       await Promise.all(
         newNames.map(name => {
-          return sendTelegramNotification(`Báo cáo tài chính của VAV ::: ${name}`);
+          return sendTelegramNotification(`Báo cáo tài chính của VAV ::: ${name}
+
+            Mở theo link: 
+            https://ezir.fpts.com.vn/thongtindoanhnghiepclient/VAV
+            `);
         })
       );
       console.log(`Đã thêm ${newNames.length} báo cáo mới và gửi thông báo.`);
