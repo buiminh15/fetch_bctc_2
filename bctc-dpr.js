@@ -74,4 +74,62 @@ async function fetchAndExtractData() {
   }
 }
 
+async function fetchBCSXKD() {
+  try {
+    const response = await axios.get('https://doruco.com.vn/tin-tuc/bao-cao-san-xuat-kinh-doanh-vn-b-32-0.html', {
+      headers: {
+        'accept': 'text/html',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+      },
+      timeout: 60000,
+      httpsAgent: agent
+    });
+
+    const html = response.data;
+    const $ = cheerio.load(html);
+    const currentYear = new Date().getFullYear().toString();
+    // Lấy tối đa 5 báo cáo mới nhất
+    const names = [];
+    $('span.tieu_de_tin').each((_, el) => {
+      const $a = $(el).find('a');
+      const nameRaw = $a.text().trim();
+      const name = he.decode(nameRaw);
+      names.push(name);
+    });
+
+    if (names.length === 0) {
+      console.log('Không tìm thấy BCSXKD nào.');
+      return;
+    }
+    console.log('📢 [bctc-mbs.js:50]', names);
+    // Lọc ra các báo cáo chưa có trong DB
+    const newNames = await filterNewNames(names, COMPANIES.DPR);
+    console.log('📢 [bctc-cdn.js:46]', newNames);
+    if (newNames.length) {
+      await insertBCTC(newNames, COMPANIES.DPR);
+
+      // Gửi thông báo Telegram cho từng báo cáo mới
+      await Promise.all(
+        newNames.map(name => {
+          return sendTelegramNotification(`Báo cáo SXKD của DPR ::: ${name}`);
+        })
+      );
+      console.log(`Đã thêm ${newNames.length} báo cáo mới và gửi thông báo.`);
+    } else {
+      console.log('Không có báo cáo mới.');
+    }
+  } catch (error) {
+    console.error('Error fetching HTML:', error);
+    process.exit(1);
+  }
+}
+
+
+
+
+fetchBCSXKD();
+
 fetchAndExtractData();
+
+
+
