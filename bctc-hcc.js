@@ -38,13 +38,10 @@ async function fetchAndExtractData() {
     const currentYear = new Date().getFullYear().toString();
     // Lấy tối đa 5 báo cáo mới nhất
     const names = [];
-    $('h5.post-title.is-large ').each((_, el) => {
+    $('h5.post-title.is-large').each((_, el) => {
       const nameRaw = $(el).text().trim();
       const name = he.decode(nameRaw);
-      const filterCondition = [currentYear, 'báo cáo tài chính'];
-      if (filterCondition.every(y => name.toLocaleLowerCase().includes(y))) {
-        names.push(name);
-      }
+      names.push(name);
     });
 
     if (names.length === 0) {
